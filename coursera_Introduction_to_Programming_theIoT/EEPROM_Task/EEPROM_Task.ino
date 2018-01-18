@@ -1,40 +1,29 @@
-#include <EEPROM.h> 
-int addrNumber;
-int lenAddr;
-int valueNumber; 
-String sInput; 
-String sAddr; 
-String sValue;
- void setup() 
- { 
- Serial.begin(9600); 
- Serial.println("\n\n type <read address> or <write address value>\n"); 
- }
-  void loop()
-   { while (Serial.available()>0) 
-   { sInput = Serial.readString();
-    if (sInput.startsWith("read")){ 
-    sInput.remove(0,5);
-     addrNumber=sInput.toInt(); 
-     Serial.print("The value in ");
-      Serial.print(addrNumber); 
-      Serial.print(" is "); 
-      Serial.println(EEPROM.read(addrNumber)); } 
-      if (sInput.startsWith("write")) { 
-      sInput.remove(0, 6); 
-      lenAddr=sInput.indexOf(' '); 
-      sAddr=sInput.substring(0,lenAddr);
-      addrNumber=sAddr.toInt(); 
-      sValue=sInput.substring(lenAddr);
-      valueNumber=sValue.toInt();
-      EEPROM.write(addrNumber,valueNumber); 
-      Serial.print("I wrote "); 
-      Serial.print(valueNumber); 
-      Serial.print(" in ");
-      Serial.println(addrNumber); 
-      } 
-      }
+#include <EEPROM.h>
+void setup() {
+Serial.begin(9600);
+}
+int address;
+int dataToWrite;
 
-   }
-
+void loop() {
+String buffer = "";
+buffer = Serial.readString();
+if(buffer.startsWith("read")) {
+address = buffer.substring(buffer.indexOf(' ') +1).toInt();
+Serial.print("ready to read from address: ");
+Serial.print(address);
+Serial.println();
+Serial.println(EEPROM.read(address)); 
+} else if(buffer.startsWith("write")) {
+address = buffer.substring(6,7).toInt();
+dataToWrite = buffer.substring(8).toInt();
+Serial.print("ready to write: ");
+Serial.print(dataToWrite);
+Serial.println();
+Serial.print("to address: ");
+Serial.print(address);
+Serial.println();
+EEPROM.write(address,dataToWrite); 
+}
+}
 
